@@ -9,6 +9,9 @@ import { pool } from "./db";
 const app = express();
 const httpServer = createServer(app);
 
+// Trust Railway's reverse proxy so secure cookies work behind HTTPS
+app.set("trust proxy", 1);
+
 const PgSession = connectPgSimple(session);
 
 app.use(
