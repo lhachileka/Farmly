@@ -1,0 +1,182 @@
+Replit Prompt: Buyer–Seller Subscription & Contract System for Farmly
+
+Context
+Farmly is a live farmer-to-buyer marketplace app with:
+	•	User roles: Buyer, Seller, Admin
+	•	Escrow payments
+	•	Delivery confirmation
+	•	Ratings & dispute handling
+
+Your task is to add a Buyer–Seller Subscription & Supply Contract feature without breaking existing functionality.
+
+⸻
+
+🎯 Feature Objective
+
+Allow buyers to subscribe to trusted sellers and lock supply contracts for fixed durations (weeks or months), with automated orders, escrow protection, and enforcement rules.
+
+⸻
+
+🧩 Core Features to Build
+
+1. Buyer → Seller Subscription System
+	•	Buyers can subscribe to sellers they trust
+	•	Subscription setup includes:
+	•	Product(s)
+	•	Quantity per delivery
+	•	Delivery frequency (weekly / bi-weekly / monthly)
+	•	Contract duration (4 weeks, 3 months, 6 months)
+	•	Seller can accept, reject, or counter-offer
+	•	Accepted subscriptions become active supply contracts
+
+⸻
+
+2. Supply Contract Types
+
+Support the following contract modes:
+	•	Fixed Price Contract (price locked for full duration)
+	•	Price Range Contract (min & max price bounds)
+	•	Volume Commitment Contract (minimum guaranteed supply & purchase)
+
+Each contract must store:
+	•	Buyer ID
+	•	Seller ID
+	•	Products
+	•	Quantity
+	•	Frequency
+	•	Duration
+	•	Pricing model
+	•	Start & end dates
+	•	Status (pending, active, paused, completed, breached)
+
+⸻
+
+3. Automated Recurring Orders
+	•	Active contracts automatically generate orders based on frequency
+	•	Orders are created before delivery dates
+	•	Buyer must fund escrow before delivery
+	•	Seller sees upcoming deliveries in dashboard
+
+⸻
+
+4. Escrow Integration for Subscriptions
+	•	Support:
+	•	Pay-per-delivery escrow
+	•	Weekly escrow funding
+	•	Monthly escrow reserve
+	•	Funds are:
+	•	Locked before delivery
+	•	Released after buyer confirms delivery
+	•	Auto-released after X hours if buyer is inactive
+
+⸻
+
+5. Delivery Confirmation & Enforcement
+	•	Buyer confirms:
+	•	Delivered as agreed
+	•	Delivered with issues
+	•	Not delivered
+	•	Rules:
+	•	Non-delivery → refund + seller penalty
+	•	False rejection → auto-release + buyer warning
+	•	Repeated abuse → account restrictions
+
+⸻
+
+6. Trust Scores & Subscription Badges
+
+Compute seller trust metrics:
+	•	Fulfillment rate
+	•	On-time delivery %
+	•	Contract completion rate
+	•	Dispute history
+
+Display badges:
+	•	“Trusted Supplier”
+	•	“Contracted Seller”
+	•	“Preferred Supplier”
+
+These affect buyer visibility and ranking.
+
+⸻
+
+7. Priority & Reserved Supply
+	•	Subscribers receive:
+	•	Priority access to harvests
+	•	Reserved quantities
+	•	Early notifications before public listings
+
+Public buyers cannot access reserved stock.
+
+⸻
+
+8. Admin Controls (Mandatory)
+
+Admin dashboard must allow:
+	•	View all contracts
+	•	Freeze / terminate contracts
+	•	Override disputes
+	•	Adjust penalties
+	•	Enable or disable subscription feature globally
+	•	Set default escrow rules and timeouts
+
+⸻
+
+🗄️ Database / Models
+
+Create or extend models for:
+	•	Subscriptions
+	•	Contracts
+	•	Recurring Orders
+	•	Escrow Schedules
+	•	Trust Metrics
+	•	Dispute Logs
+
+Ensure relationships are indexed and scalable.
+
+⸻
+
+🔐 Security & Abuse Prevention
+	•	Prevent off-app transactions by:
+	•	Locking contract orders to escrow
+	•	Disabling direct contact info sharing
+	•	Rate-limit subscription requests
+	•	Log all contract changes
+
+⸻
+
+🧪 Edge Cases to Handle
+	•	Seller stock shortages
+	•	Seasonal pricing changes
+	•	Buyer pauses subscription
+	•	Seller requests contract revision
+	•	Auto-expiry of contracts
+	•	Partial deliveries
+
+⸻
+
+📱 UX Expectations
+	•	Simple subscription flow (max 5 steps)
+	•	Clear contract summary before acceptance
+	•	Notifications for:
+	•	Upcoming deliveries
+	•	Escrow funding required
+	•	Contract breaches
+	•	Mobile-first UI
+
+⸻
+
+🚀 Output Expectations
+	•	Fully functional feature integrated into Farmly
+	•	No breaking changes to existing flows
+	•	Clean, documented code
+	•	Reusable components
+	•	Admin-ready
+
+⸻
+
+⚠️ Important
+
+Do NOT rebuild the app.
+Extend the existing system.
+Assume production-level quality.

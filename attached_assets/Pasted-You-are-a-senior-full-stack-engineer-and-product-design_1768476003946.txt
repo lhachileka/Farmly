@@ -1,0 +1,225 @@
+You are a senior full-stack engineer and product designer.
+Build a production-ready agricultural marketplace platform that connects verified farmers directly to bulk buyers, eliminating middlemen.
+The platform must work seamlessly on mobile and desktop (responsive first) and prioritize a modern, premium UI/UX.
+
+Core Product Description
+
+Create a digital agricultural exchange where farmers can list produce and livestock (live or processed) and bulk buyers can discover, bid, contract, and purchase securely.
+
+The app must support:
+
+Produce (vegetables, grains, fruits)
+
+Livestock (chickens, fish, goats, pigs – live or dressed)
+
+Transport & logistics coordination
+
+Secure escrow payments
+
+Reviews, ratings, and verification
+
+Tech Stack Requirements
+
+Frontend: React / Next.js (responsive, mobile-first)
+
+Styling: Tailwind CSS + modern design system
+
+Backend: Node.js (Express or Next API routes)
+
+Database: PostgreSQL (preferred) or MongoDB
+
+Auth: Role-based authentication (JWT / OAuth)
+
+Payments: Escrow-ready payment architecture (abstracted, provider-agnostic)
+
+Deployment-ready: Clean env variables, scalable structure
+
+User Roles (Must Be Fully Implemented)
+1. Farmer
+
+Create verified profile
+
+List produce & livestock
+
+Set:
+
+Quantity
+
+Minimum acceptable price
+
+Availability date
+
+Live or processed
+
+Upload photos & short videos
+
+Accept bids & contracts
+
+Choose pickup / delivery / app-arranged transport
+
+Ratings & reviews
+
+Earnings dashboard
+
+2. Bulk Buyer
+
+Restaurants, hotels, supermarkets, NGOs, exporters
+
+Browse & filter listings by:
+
+Price
+
+Quantity
+
+Distance
+
+Availability
+
+Place bulk bids
+
+Create future contracts (weekly/monthly supply)
+
+Secure escrow payment
+
+Rate farmers & transporters
+
+3. Transporter (Optional but Enabled)
+
+Accept delivery jobs
+
+Rate & be rated
+
+Track delivery status
+
+4. Admin (Critical)
+
+Verify farmers, buyers, and transporters
+
+Approve or suspend users
+
+Manage disputes
+
+Control categories, regions, fees
+
+View analytics dashboard (volume, pricing trends)
+
+Core Features to Build
+Marketplace
+
+Dynamic listings
+
+Bidding system
+
+Fixed-price & contract-based sales
+
+Search & advanced filters
+
+Pricing Intelligence
+
+7-day and 30-day price trends
+
+Demand indicators (low / medium / high)
+
+Regional price averages
+
+Escrow Payments
+
+Buyer pays into escrow
+
+Funds released after:
+
+Delivery confirmation
+
+Quality acceptance window
+
+Admin override for disputes
+
+Reviews & Ratings
+
+Two-way ratings (farmer ↔ buyer ↔ transporter)
+
+Weighted trust score
+
+Low ratings reduce platform visibility
+
+Transport & Logistics
+
+Delivery request flow
+
+Distance-based pricing logic
+
+Status tracking (pending → in transit → delivered)
+
+Notifications
+
+In-app + email/SMS-ready architecture
+
+Alerts for:
+
+New bids
+
+High demand products
+
+Price spikes
+
+Nearby buyers or sellers
+
+UI / UX Requirements (Very Important)
+
+Clean, premium, African-market-ready aesthetic
+
+Large cards, strong visuals, icons
+
+Dark & light mode
+
+Farmer-friendly flows (low friction)
+
+Buyer dashboard optimized for speed
+
+Charts for price trends & analytics
+
+Empty states and loading skeletons
+
+UI inspiration:
+
+Stripe
+
+Airbnb
+
+Uber Freight
+
+Modern agri-tech startups
+
+Additional Requirements
+
+Offline-friendly architecture (SMS / USSD hooks ready)
+
+Modular, scalable codebase
+
+Clear folder structure
+
+Commented, readable code
+
+Seed data for demo/testing
+
+Include README with setup instructions
+
+Output Expectations
+
+Full project scaffold
+
+Database schema
+
+Auth & role system
+
+Core marketplace flows
+
+Admin dashboard
+
+Polished UI
+
+Ready for pilot launch
+
+Think like a startup CTO and product designer.
+Make smart assumptions when needed.
+Build this as if it will serve thousands of farmers and buyers.

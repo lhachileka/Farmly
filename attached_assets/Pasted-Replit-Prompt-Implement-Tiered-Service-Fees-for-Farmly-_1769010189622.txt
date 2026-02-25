@@ -1,0 +1,189 @@
+Replit Prompt: Implement Tiered Service Fees for Farmly (Transaction & Transport)
+
+Context
+
+Farmly is a live multi-role marketplace with:
+	•	Farmers
+	•	Buyers
+	•	Transporters
+
+The app supports:
+	•	Escrow payments
+	•	One-off transactions
+	•	Contracts (recurring deliveries)
+	•	Transport jobs
+	•	Subscription tiers (Starter, Growth, Pro, Commercial)
+
+We are implementing a transparent, tier-aware service fee system that aligns with Farmly’s value proposition.
+
+⚠️ This is an extension, not a rebuild.
+⚠️ Do NOT hardcode fees without configurability.
+
+⸻
+
+🎯 OBJECTIVES
+	1.	Introduce a default platform service fee
+	2.	Split fees between buyers and farmers
+	3.	Apply separate transport service fees
+	4.	Reduce fees based on subscription tier
+	5.	Support contract-based lower fees
+	6.	Ensure full transparency in checkout
+	7.	Keep fees adjustable from admin backend
+
+⸻
+
+💰 FEE STRUCTURE TO IMPLEMENT
+
+1. Standard Transaction Fee (Produce, Livestock, Goods)
+
+Base fee:
+	•	6% total per completed transaction
+
+Split as:
+	•	3% Buyer
+	•	3% Farmer
+
+Fee is:
+	•	Calculated at checkout
+	•	Clearly shown to both parties
+	•	Deducted automatically via escrow
+
+⸻
+
+2. Subscription-Based Fee Reductions
+
+Each user has a subscription_tier that affects fees.
+
+Apply reductions as follows:
+	•	Starter → 6%
+	•	Growth → 5%
+	•	Pro → 4%
+	•	Commercial → 3%
+
+Rules:
+	•	Each party’s fee is calculated based on their own tier
+	•	Buyer and farmer fees may differ
+	•	Total fee = buyer portion + farmer portion
+
+⸻
+
+3. Transport Service Fees
+
+For transport jobs:
+	•	3% – 4% platform fee (configurable)
+	•	Applied to completed transport payments only
+
+Default:
+	•	3.5%
+
+Rules:
+	•	Fee deducted from transport escrow
+	•	Visible to transporter before accepting job
+	•	Not split unless configured later
+
+⸻
+
+4. Contract Transactions (Recurring Supply)
+
+For contract-based orders:
+	•	Reduced fee range: 2% – 4%
+	•	Charged per fulfilled delivery, not upfront
+
+Logic:
+	•	Apply same subscription-based reductions
+	•	Contracts must clearly display reduced fee benefit
+
+⸻
+
+🧠 FEE CALCULATION RULES
+	•	Fees must be:
+	•	Deterministic
+	•	Logged
+	•	Auditable
+	•	No hidden charges
+	•	Fee calculation must occur:
+	•	Before payment
+	•	Before escrow lock
+	•	Round consistently (define rounding logic globally)
+
+⸻
+
+🧾 CHECKOUT UI REQUIREMENTS
+
+At checkout show:
+	•	Item subtotal
+	•	Transport cost (if applicable)
+	•	Buyer service fee
+	•	Seller service fee
+	•	Total payable
+	•	Tooltip explaining “What this fee covers”
+
+Language should emphasize:
+	•	Protection
+	•	Escrow
+	•	Market access
+	•	Dispute handling
+
+⸻
+
+🔐 ADMIN CONFIGURATION (OWNER-ONLY)
+
+Add admin-only controls to:
+	•	Adjust base transaction fee
+	•	Adjust transport fee
+	•	Adjust contract fee range
+	•	Enable/disable fee reductions per tier
+	•	View fee revenue analytics
+
+Admin access is via secured admin URL.
+
+⸻
+
+🗄️ DATA MODEL EXTENSIONS
+
+Add or extend:
+
+Fees
+	•	transaction_id
+	•	user_id
+	•	role
+	•	fee_percentage
+	•	fee_amount
+	•	subscription_tier
+	•	created_at
+
+Config
+	•	base_transaction_fee
+	•	transport_fee
+	•	contract_fee_min
+	•	contract_fee_max
+
+Do NOT hardcode values.
+
+⸻
+
+🧪 EDGE CASES TO HANDLE
+	•	Buyer and farmer on different tiers
+	•	Transport added after checkout
+	•	Contract renegotiation mid-term
+	•	Transaction cancellation before escrow release
+	•	Partial delivery disputes
+
+⸻
+
+✅ SUCCESS CRITERIA
+	•	Fees feel fair and predictable
+	•	Small users are not punished
+	•	Heavy users are rewarded
+	•	Revenue scales with volume
+	•	No friction added to checkout
+
+⸻
+
+FINAL NOTE (IMPORTANT)
+
+This fee system must feel like:
+“We earn when you succeed”, not a tax.
+
+Done right, users won’t argue about 6% —
+they’ll argue about how to get to 3%.

@@ -1,0 +1,261 @@
+Replit Prompt: Quality Grading & Verification Module for Farmly
+
+Context
+Farmly is a live farmer-to-buyer marketplace with escrow, delivery confirmation, subscriptions, co-ops, and disputes.
+
+Your task is to add a standardized Quality Grading & Verification system for produce and livestock.
+
+Do NOT rebuild the app. Extend existing systems.
+
+⸻
+
+🎯 Feature Goal
+
+Ensure consistent quality expectations, reduce disputes, and increase buyer trust using a simple, enforceable grading framework.
+
+⸻
+
+🧩 Core Features
+
+1. Standard Grade Bands
+Implement three universal grades:
+	•	Grade A
+	•	Grade B
+	•	Grade C
+
+Grades apply to:
+	•	Produce
+	•	Livestock
+
+Each listing, contract, or delivery must declare a grade.
+
+⸻
+
+2. Mandatory Media Verification
+For every listing or delivery:
+	•	Minimum 3 photos (different angles)
+	•	1 short video (10–20 seconds)
+	•	Auto timestamp + geo-tag
+	•	Media stored and linked to order ID
+
+Uploads are required before escrow release.
+
+⸻
+
+3. Buyer Grade Confirmation
+After delivery, buyer selects:
+	•	✅ Grade matches agreement
+	•	⚠️ Grade lower than agreed
+	•	❌ Reject delivery
+
+Buyer must optionally add:
+	•	Photo evidence
+	•	Comment (required if disputing)
+
+⸻
+
+4. Platform Verification (Optional)
+Enable Farmly Verified Grading for:
+	•	Bulk orders
+	•	Subscription contracts
+	•	Co-op deliveries
+
+Verification can be done by:
+	•	Admin-approved inspectors
+	•	Partner organizations
+	•	Farmly agents
+
+Display badge:
+“Farmly Verified – Grade A/B”
+
+⸻
+
+5. Trust Score Integration
+Track per seller:
+	•	Grade accuracy rate
+	•	Dispute frequency
+	•	Delivery consistency
+
+Trust score affects:
+	•	Search ranking
+	•	Contract eligibility
+	•	Subscription visibility
+
+⸻
+
+6. Admin Controls
+Admin must be able to:
+	•	Override grades
+	•	Resolve grade disputes
+	•	Adjust penalties
+	•	Enable/disable grading rules
+	•	Modify tolerance levels
+
+⸻
+
+🗄️ Data Models
+
+Add or extend:
+	•	GradeDefinitions
+	•	ListingGrades
+	•	DeliveryGrades
+	•	MediaEvidence
+	•	VerificationRecords
+	•	GradeDisputes
+	•	SellerTrustMetrics
+
+⸻
+
+🚨 Edge Cases
+	•	Partial grade mismatch
+	•	Buyer abuse of grading
+	•	Repeated false claims
+	•	Seasonal quality changes
+
+⸻
+
+✅ Output Requirements
+	•	Fully integrated
+	•	Production-ready
+	•	Clean, documented code
+	•	No breaking changes
+
+⸻
+
+2. Grade Definitions — Produce & Livestock (In-App Standards)
+
+These must be visible inside the app.
+
+⸻
+
+🌽 Produce Grading
+
+Grade A
+	•	Fresh, firm, uniform size
+	•	No visible rot, mold, or bruising
+	•	Clean and properly harvested
+	•	Suitable for hotels, supermarkets, contracts
+
+Grade B
+	•	Minor cosmetic defects
+	•	Slight size variation
+	•	Fully edible and fresh
+	•	Suitable for restaurants and bulk buyers
+
+Grade C
+	•	Visible defects or irregular size
+	•	Still edible
+	•	Not suitable for contracts
+	•	Local or discounted sale only
+
+⸻
+
+🐄 Livestock Grading
+
+Grade A
+	•	Healthy appearance
+	•	Within agreed weight range (±5%)
+	•	Vet-verified or health declaration
+	•	Suitable for contracts and institutional buyers
+
+Grade B
+	•	Healthy but outside ideal weight range
+	•	No visible illness
+	•	Suitable for local markets or flexible buyers
+
+Grade C
+	•	Does not meet contract standards
+	•	Not eligible for subscriptions or co-ops
+	•	Local sale only
+
+⸻
+
+3. Dispute Logic Tied to Grading (Very Important)
+
+This is where trust is enforced.
+
+⸻
+
+⚖️ Dispute Rules
+
+Case 1: Grade Matches
+	•	Escrow released immediately
+	•	Seller trust score increases
+
+⸻
+
+Case 2: Grade Lower Than Agreed
+
+Buyer flags ⚠️
+
+Options:
+	•	Partial refund (price difference)
+	•	Accept at reduced price
+	•	Escalate to admin
+
+Outcome logged permanently.
+
+⸻
+
+Case 3: Rejection
+
+Buyer rejects ❌
+
+Requires:
+	•	Photo + video evidence
+	•	Written reason
+
+Admin or system decides:
+	•	Refund buyer
+	•	Release partial escrow
+	•	Penalize seller if confirmed
+
+⸻
+
+🚨 Abuse Protection
+
+Buyer Abuse
+
+If buyer:
+	•	Repeatedly rejects valid deliveries
+	•	Lacks evidence
+	•	Has dispute pattern
+
+→ Auto escrow release
+→ Buyer warning
+→ Possible suspension
+
+⸻
+
+Seller Abuse
+
+If seller:
+	•	Repeatedly mislabels grades
+	•	High dispute rate
+	•	Delivers below contract grade
+
+→ Lower trust score
+→ Temporary contract ban
+→ Reduced visibility
+
+⸻
+
+⏱ Auto-Resolution Rules
+	•	Buyer inactivity → auto-release after X hours
+	•	Seller inactivity → auto-refund after Y hours
+	•	Admin override always available
+
+⸻
+
+Final Strategic Advice (Straight Talk)
+
+Grading is not about perfection.
+It’s about:
+	•	Clear expectations
+	•	Proof
+	•	Consequences
+
+If you enforce this cleanly:
+	•	Disputes drop
+	•	Off-app deals reduce
+	•	Serious buyers stay

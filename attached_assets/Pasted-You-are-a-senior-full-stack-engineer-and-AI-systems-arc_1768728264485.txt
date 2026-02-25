@@ -1,0 +1,172 @@
+You are a senior full-stack engineer and AI systems architect joining an already built farmer-to-buyer marketplace app.
+
+⚠️ Do NOT rebuild the app.
+Your task is to extend the existing system by adding AI features cleanly and safely.
+
+⸻
+
+EXISTING APP CONTEXT (ASSUMED)
+
+The app already has:
+	•	Users (buyers & farmers)
+	•	Listings / produce catalog
+	•	Orders
+	•	Escrow payments
+	•	Delivery confirmation flow
+	•	In-app chat
+	•	Admin dashboard
+
+⸻
+
+YOUR TASK
+
+Add the following AI-powered features as modular extensions that integrate with existing tables, APIs, and UI.
+
+⸻
+
+1. AI DELIVERY VERIFICATION (EXTENSION)
+
+Integrate with:
+	•	Existing delivery confirmation flow
+	•	Existing escrow release logic
+
+Add:
+	•	AI validation step BEFORE escrow release
+
+AI Inputs:
+	•	Delivery photo/video
+	•	Timestamp
+	•	Buyer & seller GPS data
+	•	Order metadata
+	•	Historical behavior
+
+Logic:
+	•	Detect reused or suspicious images
+	•	Validate location proximity
+	•	Check timing consistency
+	•	Compare against past disputes
+
+Output:
+	•	auto_approved
+	•	flagged_for_review
+	•	rejected
+
+Only flagged cases go to admin.
+
+⸻
+
+2. USER TRUST SCORE (NEW SYSTEM)
+
+Add:
+	•	trust_score field for buyers & sellers (0–100)
+
+AI Updates score based on:
+	•	Completed transactions
+	•	Disputes raised vs resolved
+	•	Delivery confirmations
+	•	Payment delays
+	•	Off-app behavior attempts
+
+Trust score must:
+	•	Update automatically
+	•	Affect payout speed and verification strictness
+	•	Be visible to admin (not public)
+
+⸻
+
+3. AI CHAT MONITORING (ANTI OFF-APP)
+
+Integrate with:
+	•	Existing chat system
+
+AI Must:
+	•	Detect phone numbers, WhatsApp phrases, emails
+	•	Detect repeated off-platform intent
+
+Actions:
+	•	Mask detected content
+	•	Warn user
+	•	Temporarily restrict chat if repeated
+
+No permanent bans without admin action.
+
+⸻
+
+4. AI DISPUTE ASSISTANT
+
+Integrate with:
+	•	Existing dispute flow
+
+AI Should:
+	•	Summarize dispute evidence
+	•	Analyze delivery proof
+	•	Recommend outcome with confidence score
+
+Admin approves or overrides.
+
+⸻
+
+5. AI SELLER INSIGHTS (NON-DISRUPTIVE)
+
+Add:
+	•	Price suggestions based on:
+	•	Location
+	•	Seasonality
+	•	Historical sales
+	•	Simple demand alerts
+
+These are advisory only (seller chooses final price).
+
+⸻
+
+6. AI SUPPORT ASSISTANT
+
+Add:
+	•	AI helper for:
+	•	Escrow explanation
+	•	Delivery steps
+	•	Dispute guidance
+
+Must be:
+	•	Lightweight
+	•	Text-first
+	•	Mobile-friendly
+
+⸻
+
+TECHNICAL RULES (IMPORTANT)
+	•	Reuse existing database tables where possible
+	•	Add new tables ONLY when necessary
+	•	AI services must be modular (can be toggled off)
+	•	No breaking changes to current flows
+	•	All AI decisions must be logged
+	•	Admin can override any AI decision
+
+⸻
+
+ADMIN DASHBOARD EXTENSIONS
+
+Add sections for:
+	•	Flagged deliveries
+	•	Trust score monitoring
+	•	AI decision logs
+	•	AI sensitivity thresholds
+
+⸻
+
+OUTPUT EXPECTATIONS
+
+You must:
+	1.	Identify where AI hooks into existing code
+	2.	Add required schema changes
+	3.	Create AI services/modules
+	4.	Expose new API endpoints
+	5.	Update UI minimally
+	6.	Comment all AI logic clearly
+
+⸻
+
+FINAL INSTRUCTION
+
+Do not rewrite or refactor the core app unless required for integration.
+Focus on safe, incremental AI upgrades that improve trust and reduce fraud.

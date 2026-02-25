@@ -1,0 +1,173 @@
+Done. Below is the complete Replit prompt, continuing and finishing the work cleanly.
+
+You can paste this as-is into Replit.
+
+⸻
+
+🔧 Replit Prompt: Standardize Role Naming Across Farmly (Producers, Buyers, Logistics Partners)
+
+Context
+
+Farmly is a live marketplace app with three functional roles currently referred to inconsistently as:
+	•	Farmers
+	•	Buyers
+	•	Transporters
+
+This inconsistency is causing:
+	•	Confusing onboarding
+	•	Fragmented dashboards
+	•	Messy logic in insights, fees, and subscriptions
+
+We are standardizing role naming across the entire application.
+
+⸻
+
+🎯 OBJECTIVE
+
+Replace legacy role terminology with:
+	•	Producers (formerly Farmers)
+	•	Buyers (unchanged)
+	•	Logistics Partners (formerly Transporters)
+
+⚠️ This is a semantic and UX refactor, not a functional rewrite.
+⚠️ Existing data, permissions, and access control must remain intact.
+
+⸻
+
+🔄 ROLE MAPPING (CRITICAL)
+
+Old Role	New Role
+farmer	producer
+buyer	buyer
+transporter	logistics_partner
+
+Internal IDs may remain unchanged if required, but all user-facing text must use new labels.
+
+⸻
+
+🧱 SCOPE OF CHANGES
+
+1. Onboarding & Registration
+	•	Update role selection labels
+	•	Update role descriptions
+	•	Ensure dashboard routing remains role-specific
+	•	Keep backend role identifiers backward compatible
+
+⸻
+
+2. Dashboards & Navigation
+	•	Update dashboard titles
+	•	Update menu labels
+	•	Update empty-state messaging
+	•	Ensure Insights page is role-aware using new terminology
+
+⸻
+
+3. Insights & Analytics
+	•	Replace all role references:
+	•	“Farmer insights” → “Producer insights”
+	•	“Transport insights” → “Logistics insights”
+	•	Align insights, AI recommendations, and subscription tiers to new role names
+	•	Update tooltips and explanations
+
+⸻
+
+4. Transactions, Contracts & Transport
+	•	Replace wording in:
+	•	Checkout
+	•	Escrow summaries
+	•	Contract templates
+	•	Transport job postings
+	•	Ensure fee explanations use:
+	•	Producer fee
+	•	Buyer fee
+	•	Logistics service fee
+
+⸻
+
+5. Subscription Tiers & Pricing Copy
+
+Apply new role language consistently across:
+	•	Subscription tier descriptions
+	•	Fee reduction messaging
+	•	Upgrade prompts
+	•	Insights paywall copy (future)
+
+⸻
+
+6. Admin Panel (Owner-Only)
+	•	Admin sees:
+	•	Producers
+	•	Buyers
+	•	Logistics Partners
+	•	Filters, analytics, and reports must use new labels
+	•	Internal IDs may remain unchanged
+
+⸻
+
+7. Notifications & Emails
+
+Update:
+	•	Push notifications
+	•	Emails
+	•	In-app alerts
+	•	System messages
+
+All must reflect new role naming.
+
+⸻
+
+🧠 AI & COPY RULES
+	•	AI-generated insights must use new role names
+	•	Avoid legacy terms in explanations
+	•	Keep language professional and inclusive
+	•	Do not expose internal role IDs to users
+
+⸻
+
+🧪 TESTING REQUIREMENTS
+
+For testing, ensure:
+	•	One test account per role:
+	•	Producer
+	•	Buyer
+	•	Logistics Partner
+	•	Each role:
+	•	Sees correct dashboard
+	•	Receives correct insights
+	•	Has correct permissions
+	•	No broken routes or logic
+
+⸻
+
+🚫 WHAT NOT TO DO
+	•	Do not rename database tables unless required
+	•	Do not break API contracts
+	•	Do not change permission logic
+	•	Do not remove backward compatibility
+
+⸻
+
+✅ SUCCESS CRITERIA
+	•	Clean, professional role naming across the app
+	•	No user confusion during onboarding
+	•	Improved credibility and scalability
+	•	Zero functional regressions
+
+⸻
+
+FINAL NOTE
+
+This change quietly levels up Farmly’s perception without touching core logic.
+
+Users feel like they’re part of a serious marketplace, not a small app.
+
+⸻
+
+If you want next, I can:
+	•	Rename subscription tiers per role
+	•	Update marketing copy & landing page
+	•	Align Insights language with role maturity
+	•	Or generate a migration checklist
+
+Just tell me the next move.

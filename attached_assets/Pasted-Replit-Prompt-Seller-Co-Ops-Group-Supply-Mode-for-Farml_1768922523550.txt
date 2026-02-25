@@ -1,0 +1,122 @@
+Replit Prompt: Seller Co-Ops (Group Supply Mode) for Farmly
+
+Context
+Farmly is a live farmer-to-buyer marketplace with escrow, delivery confirmation, disputes, and admin controls.
+
+Your task is to add a Seller Co-Op (Group Supply) feature that allows multiple sellers to collectively fulfill large buyer orders.
+
+Do NOT rebuild the app. Extend existing systems.
+
+⸻
+
+🎯 Feature Goal
+
+Enable small farmers to pool produce to meet large or recurring buyer demand while keeping escrow, accountability, and trust intact.
+
+⸻
+
+🧩 Core Features
+
+1. Co-Op Creation
+	•	Any verified seller can create a Co-Op Listing
+	•	Co-Op defines:
+	•	Product type
+	•	Total target quantity
+	•	Price per unit (fixed or range)
+	•	Delivery date(s)
+	•	Minimum quality grade
+	•	Creator becomes Co-Op Lead
+
+⸻
+
+2. Seller Participation
+	•	Other sellers can join a Co-Op
+	•	Each seller commits:
+	•	Quantity
+	•	Availability window
+	•	System validates total quantity doesn’t exceed target
+
+⸻
+
+3. Buyer Interaction
+	•	Buyers see Co-Ops as single listings
+	•	Buyer pays one escrow
+	•	Farmly handles internal allocation
+
+⸻
+
+4. Escrow & Payout Logic
+	•	Buyer funds escrow once
+	•	After delivery confirmation:
+	•	Funds split automatically per seller contribution
+	•	Partial failure rules:
+	•	Non-delivering seller penalized
+	•	Delivering sellers still paid
+
+⸻
+
+5. Delivery & Verification
+	•	Sellers mark produce “Ready”
+	•	Co-Op Lead or Farmly confirms aggregation
+	•	Buyer confirms final delivery
+	•	Photo + timestamp verification supported
+
+⸻
+
+6. Trust & Penalties
+Track per seller:
+	•	Co-Op fulfillment rate
+	•	Late delivery count
+	•	Quality rejections
+
+Penalties:
+	•	Temporary co-op bans
+	•	Ranking reduction
+	•	Escrow holdbacks
+
+⸻
+
+7. Admin Controls (Mandatory)
+Admin can:
+	•	View all co-ops
+	•	Remove sellers
+	•	Adjust payouts
+	•	Resolve disputes
+	•	Disable co-op feature globally
+
+⸻
+
+🗄️ Data Models
+
+Add or extend:
+	•	CoOp
+	•	CoOpMembers
+	•	CoOpOrders
+	•	SellerContributions
+	•	PayoutSplits
+	•	CoOpDisputes
+
+⸻
+
+🚨 Edge Cases
+	•	Seller drops out last minute
+	•	Partial quantity delivered
+	•	Quality mismatch
+	•	Buyer cancels
+	•	Seasonal price volatility
+
+⸻
+
+📱 UX Requirements
+	•	Simple join flow (max 3 steps)
+	•	Clear contribution summary
+	•	Progress bar showing % filled
+	•	Notifications for all status changes
+
+⸻
+
+✅ Output Requirements
+	•	Fully integrated feature
+	•	Production-ready
+	•	No breaking existing logic
+	•	Clean, documented code

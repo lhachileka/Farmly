@@ -1,0 +1,223 @@
+Context
+Farmly is a live agri-marketplace app with three roles:
+	•	Buyers
+	•	Farmers (Sellers)
+	•	Transporters
+
+The app already supports orders, escrow, transport jobs, and role-based dashboards.
+We are adding two new features that improve transaction flexibility and long-term relationships.
+
+⚠️ This is an incremental enhancement, not a rebuild.
+Do NOT refactor core architecture.
+Extend existing checkout, transport, and user interaction logic.
+
+⸻
+
+🎯 FEATURES TO IMPLEMENT
+
+FEATURE 1: Transportation Cost Sharing
+
+Objective
+
+Allow buyers and farmers to:
+	•	Request transport before checkout
+	•	Share transport costs between buyer and farmer
+	•	Expose transport requests to the transport marketplace
+
+⸻
+
+1. Transport Request at Checkout
+
+Before final checkout:
+	•	Add an option: “Request Transport”
+	•	If selected:
+	•	A transport job is created
+	•	Job is posted to the transport marketplace
+	•	Order remains pending until transport is assigned (or timeout)
+
+Transport request includes:
+	•	Pickup location (farmer)
+	•	Drop-off location (buyer)
+	•	Load details
+	•	Delivery window
+	•	Suggested transport price
+
+⸻
+
+2. Transport Cost Sharing Logic
+
+Add an option at checkout:
+“Split Transport Cost”
+
+Supported modes:
+	•	Buyer pays 100%
+	•	Farmer pays 100%
+	•	Split by percentage (e.g. 70% buyer / 30% farmer)
+
+Rules:
+	•	Percentages must total 100%
+	•	Split must be clearly shown to both parties before confirmation
+	•	Split values are locked once order is placed
+
+⸻
+
+3. Escrow Integration (Required)
+	•	Transport cost is split into:
+	•	Buyer portion
+	•	Farmer portion
+	•	Both portions are:
+	•	Locked in escrow
+	•	Released to transporter after successful delivery
+	•	If one party fails to fund escrow:
+	•	Order cannot proceed
+	•	Notifications sent
+
+⸻
+
+4. Transporter Interaction
+
+Transporters can:
+	•	View transport jobs with:
+	•	Total transport fee
+	•	Cost split breakdown (hidden from transporter pricing logic)
+	•	Accept
+	•	Decline
+	•	Counter-offer total price
+
+If counter-offer is accepted:
+	•	Cost split percentages remain the same
+	•	Absolute amounts adjust automatically
+
+⸻
+
+FEATURE 2: Favourites System (Buyers, Farmers & Transporters)
+
+Objective
+
+Enable relationship building and repeat transactions by allowing users to favourite trusted partners.
+
+⸻
+
+5. Favourite Users (All Roles)
+
+Buyers and farmers can favourite:
+	•	Buyers
+	•	Farmers
+	•	Transporters
+
+Transporters can favourite:
+	•	Buyers
+	•	Farmers
+
+Favourites can only be added if:
+	•	At least one completed transaction exists between the two parties
+
+⸻
+
+6. Favourite Management
+
+Users can:
+	•	View favourites list
+	•	Remove favourites
+	•	See role badge and trust score for favourites
+
+Favourites must be:
+	•	Private
+	•	Role-aware
+	•	Non-public
+
+⸻
+
+7. Favourite Transporters (Manual Assignment)
+
+Buyers and farmers can:
+	•	Favourite transporters
+	•	Manually assign a transport job to a favourite transporter
+
+Flow:
+	•	Transport requested
+	•	User selects “Assign Favourite Transporter”
+	•	Transporter receives direct job request
+	•	Transporter can accept / decline / counter
+
+If declined:
+	•	Job optionally goes to public marketplace
+
+⸻
+
+8. Favourite Buyers / Farmers (Business Growth)
+
+Buyers and farmers can:
+	•	Favourite past trading partners
+	•	Quickly:
+	•	Reorder
+	•	Propose contracts
+	•	Initiate negotiations
+	•	Signal demand or supply availability
+
+No automatic messaging spam.
+
+⸻
+
+🔐 ROLE & SECURITY RULES
+	•	Favourites must be role-validated server-side
+	•	Users cannot favourite themselves
+	•	Admin can view favourites only for dispute investigation
+	•	No public visibility of favourites
+
+⸻
+
+🗄️ DATA MODELS (EXTEND ONLY)
+
+Add:
+	•	Favourites
+	•	user_id
+	•	favourite_user_id
+	•	role
+	•	created_at
+	•	TransportCostSplits
+	•	order_id
+	•	buyer_percentage
+	•	farmer_percentage
+	•	buyer_amount
+	•	farmer_amount
+
+Extend:
+	•	Orders
+	•	TransportJobs
+	•	Escrow
+
+⸻
+
+🧪 EDGE CASES TO HANDLE
+	•	One party refuses cost split
+	•	Transporter counter-offers higher price
+	•	Favourite transporter unavailable
+	•	Order cancelled after transport request
+	•	Favourite removed mid-transaction (should not affect active jobs)
+
+⸻
+
+🎨 UX REQUIREMENTS
+	•	Cost split must be visually clear at checkout
+	•	Favourite buttons must be subtle (⭐ icon)
+	•	One-tap assignment for favourite transporters
+	•	Clear confirmation modals
+
+⸻
+
+✅ SUCCESS CRITERIA
+	•	Reduced transport disputes
+	•	Faster checkout decisions
+	•	Increased repeat transactions
+	•	Stronger buyer–farmer–transporter relationships
+	•	No disruption to existing flows
+
+⸻
+
+FINAL STRAIGHT TALK
+
+These two features:
+	•	Encourage fair cost sharing
+	•	Reduce friction in logistics
+	•	Turn Farmly into a relationship-driven marketplace, not just listings

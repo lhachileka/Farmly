@@ -1,0 +1,167 @@
+Context
+Farmly is a live farmer-to-buyer marketplace app with listings, orders, escrow, subscriptions, co-ops, and quality grading.
+We are adding demand forecasting as an incremental feature.
+
+Do NOT rebuild the app.
+Do NOT refactor core architecture.
+Extend existing systems only.
+
+⸻
+
+🎯 Feature Objective
+
+Introduce Buyer Demand Forecasting that allows buyers to:
+	•	Declare future demand
+	•	Help sellers plan production
+	•	Reduce shortages and waste
+	•	Increase contract and subscription adoption
+
+This is forecasting, not guaranteed orders (unless converted to contracts).
+
+⸻
+
+🧩 Core Feature Components
+
+1. Demand Forecast Creation (Buyer)
+
+Buyers can create a Demand Forecast specifying:
+	•	Product(s)
+	•	Estimated quantity
+	•	Frequency (weekly / monthly / one-off future date)
+	•	Forecast duration (date range)
+	•	Preferred quality grade (A / B / C)
+	•	Target price (optional)
+	•	Location / delivery area
+
+Forecasts must clearly state:
+“This is a demand signal, not a purchase commitment.”
+
+⸻
+
+2. Seller Discovery & Response
+
+Sellers can:
+	•	View nearby or relevant demand forecasts
+	•	Filter by product, quantity, date, and location
+	•	Express interest by:
+	•	Committing indicative quantity
+	•	Proposing price
+	•	Suggesting contract or subscription
+
+Multiple sellers may respond to one forecast.
+
+⸻
+
+3. Conversion Paths (Critical)
+
+Enable one-click conversion from forecast to:
+	•	Subscription
+	•	Fixed contract
+	•	Co-Op listing
+	•	Scheduled order
+
+No re-entry of data.
+
+⸻
+
+4. Forecast Visibility Rules
+	•	Forecasts are visible only to relevant sellers
+	•	Priority given to:
+	•	Trusted sellers
+	•	Nearby suppliers
+	•	Co-Op-eligible sellers
+	•	Forecasts auto-expire after end date
+
+⸻
+
+5. Forecast Analytics (Lightweight)
+
+Track:
+	•	Forecast vs fulfilled volume
+	•	Seller response rate
+	•	Conversion rate to contracts
+
+Use metrics to:
+	•	Improve recommendations
+	•	Rank serious buyers and sellers
+
+⸻
+
+6. Notifications
+
+Notify:
+	•	Sellers when new relevant forecasts appear
+	•	Buyers when sellers respond
+	•	Both parties when conversion options are available
+
+⸻
+
+🧠 Intelligence Layer (Rule-Based)
+
+Use existing data to:
+	•	Suggest forecasts to repeat buyers
+	•	Recommend high-demand crops to sellers
+	•	Flag unmet demand gaps
+
+No advanced AI required.
+
+⸻
+
+👑 Owner-Only Monitoring (Hidden)
+
+Only visible to app owner:
+	•	Top forecasted products
+	•	Demand-supply gaps
+	•	Regional shortages
+	•	Conversion rates
+
+Monitoring only. No exposure to users.
+
+⸻
+
+🗄️ Data Models (Extend Only)
+
+Add:
+	•	DemandForecasts
+	•	ForecastResponses
+	•	ForecastConversions
+	•	ForecastAnalytics
+
+Reuse:
+	•	Products
+	•	Locations
+	•	Users
+	•	Contracts
+	•	Subscriptions
+
+⸻
+
+🧪 Edge Cases
+	•	Forecasts with no seller response
+	•	Over-subscribed demand
+	•	Buyer cancellation
+	•	Seller non-delivery after conversion
+	•	Seasonal demand spikes
+
+⸻
+
+🎨 UX Requirements
+	•	Simple forecast creation (max 4 steps)
+	•	Clear disclaimers
+	•	Clean forecast cards for sellers
+	•	Clear conversion CTA
+
+⸻
+
+✅ Success Criteria
+	•	Increased seller planning activity
+	•	More subscriptions and contracts
+	•	Reduced stock-outs
+	•	No disruption to existing flows
+
+⸻
+
+Final advice (important)
+
+Demand forecasting works only if it’s easy, visible, and non-binding.
+Make it feel like raising a hand, not signing a contract.

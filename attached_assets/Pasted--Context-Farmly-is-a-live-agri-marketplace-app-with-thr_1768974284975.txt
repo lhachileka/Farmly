@@ -1,0 +1,257 @@
+
+Context
+Farmly is a live agri-marketplace app with three roles:
+	•	Buyers
+	•	Farmers
+	•	Transporters
+
+Transport already exists but is underdeveloped.
+Your task is to fully upgrade the transport role so it becomes reliable, trusted, and revenue-generating.
+
+⚠️ This is an extension, not a rebuild.
+Do NOT refactor core architecture.
+Do NOT break existing order, escrow, or role logic.
+
+⸻
+
+🎯 Transport System Objectives
+	1.	Make transport trackable and accountable
+	2.	Protect transporters from false claims
+	3.	Reduce delivery disputes
+	4.	Enable repeat and subscription deliveries
+	5.	Give the app owner full monitoring visibility (hidden)
+
+⸻
+
+🧩 CORE TRANSPORT FEATURES (ALL REQUIRED)
+
+⸻
+
+1. Transport Job Creation (Automatic)
+
+Every confirmed order must generate a Transport Job.
+
+Each job includes:
+	•	Order ID
+	•	Pickup location (farmer)
+	•	Drop-off location (buyer)
+	•	Product type
+	•	Quantity / weight
+	•	Delivery window
+	•	Suggested transport price
+	•	Job status (open, assigned, in-progress, completed, disputed)
+
+Transport job creation must be automatic and seamless.
+
+⸻
+
+2. Transport Job Marketplace
+
+Transporters can:
+	•	View available jobs
+	•	Filter by:
+	•	Distance
+	•	Load size
+	•	Route direction
+	•	Delivery date
+	•	Accept job at suggested price
+	•	Counter-offer transport price
+
+Buyers or farmers confirm transporter selection.
+
+⸻
+
+3. Transport Escrow & Payouts
+
+Transport payment must be:
+	•	Included in the main escrow OR
+	•	Held in a separate transport escrow (linked to order)
+
+Rules:
+	•	Transporter payout released only after delivery confirmation
+	•	Partial payout allowed for partial delivery
+	•	Failed delivery → escrow held for dispute resolution
+
+Escrow logic must protect all three parties.
+
+⸻
+
+4. Proof of Pickup & Delivery (Mandatory)
+
+Transporters must upload proof:
+
+Pickup Proof
+	•	Photo of goods at pickup
+	•	Timestamp
+	•	GPS location
+
+Delivery Proof
+	•	Photo of goods at delivery
+	•	Timestamp
+	•	GPS location
+	•	Optional buyer signature
+
+Escrow cannot release without proof.
+
+⸻
+
+5. Transport Status & Tracking (Lightweight)
+
+Implement status tracking:
+	•	Job accepted
+	•	Goods picked up
+	•	In transit
+	•	Delivered
+
+⚠️ Do NOT implement live GPS tracking
+Status updates are manual but enforced.
+
+⸻
+
+6. Transport Ratings & Reliability Score
+
+Track transporter performance:
+	•	On-time delivery %
+	•	Job completion rate
+	•	Damage or loss complaints
+	•	Cancellation rate
+
+Generate a Transport Reliability Score:
+	•	Displayed to buyers and farmers
+	•	Used for job prioritization
+	•	Required for subscription eligibility
+
+⸻
+
+7. Transport Subscriptions (Repeat Routes)
+
+Enable fixed transport contracts for:
+	•	Hotels
+	•	Schools
+	•	NGOs
+	•	Regular buyers
+
+Features:
+	•	Weekly / monthly routes
+	•	Fixed pricing
+	•	Guaranteed volume
+	•	Auto-generated transport jobs
+
+Linked to:
+	•	Buyer subscriptions
+	•	Farmer contracts
+
+⸻
+
+8. Route & Load Optimization (Simple)
+
+Help transporters earn more:
+	•	Show nearby jobs
+	•	Allow multiple jobs on one route
+	•	Warn if load capacity exceeded
+
+No advanced optimization required.
+
+⸻
+
+9. Notifications System
+
+Notify transporters of:
+	•	New jobs
+	•	Job acceptance
+	•	Pickup deadlines
+	•	Delivery deadlines
+	•	Payment release
+
+Notify buyers/farmers of:
+	•	Transport assigned
+	•	Delivery in progress
+	•	Delivery completed
+	•	Transport issues
+
+⸻
+
+10. Disputes & Penalties (Transport-Specific)
+
+Dispute triggers:
+	•	Late delivery
+	•	Missing proof
+	•	Damaged goods
+	•	No-show transporter
+
+Rules:
+	•	False claims → penalty to claimant
+	•	Repeated transporter failure → temporary job ban
+	•	Disputes logged permanently
+
+⸻
+
+👑 OWNER-ONLY MONITORING (HIDDEN)
+
+Visible only to the app owner.
+
+Metrics:
+	•	Delivery success rate
+	•	Average delivery times
+	•	Transport disputes
+	•	Transporter earnings
+	•	Failed jobs
+
+Owner monitoring is read-only on dashboard.
+Full controls live in a secure admin route.
+
+⸻
+
+🗄️ DATA MODELS (EXTEND ONLY)
+
+Add or extend:
+	•	TransportJobs
+	•	TransportOffers
+	•	TransportEscrow
+	•	TransportProof
+	•	TransportRatings
+	•	TransportSubscriptions
+	•	TransportDisputes
+
+Reuse existing:
+	•	Orders
+	•	Users
+	•	Locations
+	•	Escrow
+	•	Notifications
+
+⸻
+
+🧪 EDGE CASES TO HANDLE
+	•	Transporter no-show
+	•	Vehicle breakdown
+	•	Partial delivery
+	•	Buyer cancellation
+	•	Farmer delay
+	•	Network failure during proof upload
+
+⸻
+
+🎨 UX REQUIREMENTS
+	•	Transport dashboard must be clear and actionable
+	•	Minimal taps to accept jobs
+	•	Strong visual status indicators
+	•	Mobile-first design
+	•	Clear empty states for new transporters
+
+⸻
+
+✅ SUCCESS CRITERIA
+	•	Fewer delivery disputes
+	•	Faster order completion
+	•	Higher transporter retention
+	•	Reduced off-app coordination
+	•	Clear accountability for delivery
+
+⸻
+
+FINAL GUIDANCE (IMPORTANT)
+
+Transport is not a support feature — it’s core infrastructure.
+
+Build it clean, enforce proof, lock payments to delivery, and Farmly becomes end-to-end.

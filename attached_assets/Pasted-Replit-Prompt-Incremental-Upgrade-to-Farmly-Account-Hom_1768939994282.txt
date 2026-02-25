@@ -1,0 +1,166 @@
+Replit Prompt: Incremental Upgrade to Farmly Account Home Dashboard (Live App)
+
+Context
+Farmly is a live, already-built farmer-to-buyer marketplace app.
+We are in the refinement and optimization phase, not initial development.
+
+The dashboard is the account home page for all users after login.
+
+There is only one admin (the app owner).
+Admin functionality is monitoring-only and must remain hidden from all users.
+
+Do NOT refactor core architecture.
+Do NOT rename routes unnecessarily.
+Do NOT break existing flows.
+
+⸻
+
+🎯 Objective
+
+Improve the existing dashboard in two ways:
+	1.	Visual polish & hierarchy
+	2.	Utility & decision-making
+
+This is an enhancement, not a redesign from scratch.
+
+⸻
+
+🧩 Scope of Changes (Allowed)
+	•	Improve layout, spacing, typography
+	•	Add new cards, sections, and indicators
+	•	Reorder content for better usability
+	•	Add lightweight logic for prioritization
+	•	Introduce subtle charts and progress indicators
+	•	Improve empty states and loading states
+
+⸻
+
+🚫 Out of Scope
+	•	No database restructuring
+	•	No role system rewrite
+	•	No new authentication flows
+	•	No admin UI exposure to users
+
+⸻
+
+🧑‍🌾 Account Home Enhancements (User-Facing)
+
+1. Header Improvements
+	•	Keep existing header
+	•	Add:
+	•	Account role indicator
+	•	Trust score / verification chip
+	•	Quick primary action button
+
+⸻
+
+2. Metrics Cards (Enhance, Don’t Replace)
+
+Upgrade existing cards:
+	•	Add icons consistency
+	•	Add secondary text (trend, period)
+	•	Make cards tappable
+	•	Introduce progress bars where relevant
+
+Examples:
+	•	Listings → include “% active”
+	•	Orders → include “pending vs completed”
+	•	Earnings → show weekly snapshot
+
+⸻
+
+3. Priority Actions Section (New)
+
+Insert a section near the top:
+“Needs Your Attention”
+	•	Escrow funding required
+	•	Delivery confirmation pending
+	•	Contract expiring
+	•	Co-Op participation incomplete
+
+This section should only appear when needed.
+
+⸻
+
+4. Activity Summary (New or Enhanced)
+
+Show last 5–10 actions:
+	•	Orders
+	•	Messages
+	•	Contract updates
+	•	Grade confirmations
+
+Keep it compact.
+
+⸻
+
+5. Smart Insights (Lightweight)
+
+Add rule-based hints:
+	•	Low fulfillment warning
+	•	High demand alerts
+	•	Recommendation to lock a contract or join a co-op
+
+No AI dependency.
+
+⸻
+
+6. Quick Actions (Contextual)
+
+Add a small floating or fixed panel:
+	•		•	New Listing
+	•	Join Co-Op
+	•	View Orders
+	•	Messages
+
+Buttons appear based on existing user role logic.
+
+⸻
+
+👑 Owner-Only Monitoring (Do Not Expose)
+
+If logged-in user ID matches the app owner:
+	•	Append a read-only monitoring strip at the bottom:
+	•	GMV
+	•	Active users
+	•	Disputes
+	•	Escrow value
+
+This must:
+	•	Be invisible to others
+	•	Be server-side protected
+	•	Not affect normal user UX
+
+⸻
+
+🎨 UI / UX Guidelines
+	•	Maintain Farmly brand
+	•	Improve contrast and hierarchy
+	•	Mobile-first
+	•	Avoid clutter
+	•	Respect current navigation patterns
+
+⸻
+
+🧪 Testing Requirements
+	•	Existing users with data
+	•	New users (empty states)
+	•	Buyer-only accounts
+	•	Seller-only accounts
+	•	Owner account
+
+⸻
+
+✅ Success Criteria
+	•	Dashboard feels more “alive”
+	•	Users know what to do next
+	•	No feature regressions
+	•	No admin data leakage
+	•	Faster decision-making for users
+
+⸻
+
+Final guidance (important)
+
+At this stage, restraint beats ambition.
+Small, smart improvements will do more than big changes.

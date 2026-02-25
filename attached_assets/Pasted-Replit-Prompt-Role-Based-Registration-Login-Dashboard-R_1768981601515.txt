@@ -1,0 +1,224 @@
+Replit Prompt: Role-Based Registration, Login & Dashboard Rework for Farmly (Critical Refactor)
+
+Context
+Farmly is a live agri-marketplace app.
+The current account types, login flows, and dashboards are inconsistent and fragmented.
+
+Your task is to rework authentication, role assignment, and dashboard routing so the system is clean, predictable, and scalable.
+
+This is a controlled refactor, not a rebuild.
+
+⸻
+
+🎯 Core Requirement (Non-Negotiable)
+
+Farmly must support exactly three user roles:
+	1.	Farmer
+	2.	Buyer
+	3.	Transporter
+
+Plus:
+	•	ONE Admin (app owner only) via a separate admin URL
+
+Roles are chosen at sign-up and cannot be mixed.
+
+⸻
+
+🧑‍💻 AUTHENTICATION & REGISTRATION (REWORK REQUIRED)
+
+1. Unified Sign-Up Flow
+
+At registration, user must:
+	•	Choose ONE role:
+	•	Farmer
+	•	Buyer
+	•	Transporter
+	•	Create:
+	•	Username
+	•	Password
+	•	Complete role-specific onboarding fields
+
+Once registration completes:
+	•	Role is permanently assigned
+	•	User is routed to the correct dashboard
+	•	No role switching unless admin overrides
+
+⸻
+
+2. Username & Password Login (Required for Testing)
+
+For all roles, implement:
+	•	Username + password authentication
+	•	No role ambiguity at login
+	•	Session must resolve:
+	•	User ID
+	•	Role
+	•	Dashboard route
+
+Create test credentials for:
+	•	Farmer
+	•	Buyer
+	•	Transporter
+	•	Admin
+
+⸻
+
+🧭 ROLE-SPECIFIC DASHBOARDS (ACCOUNT HOME)
+
+🧑‍🌾 Farmer Dashboard
+
+Farmers can:
+	•	Create product listings
+	•	Set prices
+	•	Manage stock
+	•	View orders
+	•	View transport assigned
+	•	Track payments
+
+Farmers do NOT see:
+	•	Transport job marketplace
+	•	Buyer-only tools
+
+⸻
+
+🛒 Buyer Dashboard
+
+Buyers can:
+	•	Browse farm products
+	•	Place orders
+	•	Request transport
+	•	Create transport hire bids
+	•	Track deliveries
+	•	Manage subscriptions & contracts
+
+Buyers do NOT see:
+	•	Farmer listing tools
+	•	Transport job acceptance tools
+
+⸻
+
+🚚 Transporter Dashboard
+
+Transporters can:
+	•	View available transport jobs
+	•	Accept / decline / counter-offer jobs
+	•	Post transport services for hire with pricing
+	•	Manage active deliveries
+	•	Upload pickup & delivery proof
+	•	Track earnings
+
+Transporters do NOT see:
+	•	Product listings
+	•	Buyer purchasing tools
+
+⸻
+
+🔁 TRANSPORT INTERACTION LOGIC (ROLE-AWARE)
+	•	Buyers or farmers can:
+	•	Request transport
+	•	Post hire bids (price + route + date)
+	•	Transporters can:
+	•	Accept
+	•	Decline
+	•	Counter-offer
+	•	Once accepted:
+	•	Job is locked
+	•	Escrow applies
+	•	Delivery tracking begins
+
+All transport interactions must be role-validated server-side.
+
+⸻
+
+👑 ADMIN (OWNER-ONLY)
+
+Admin Access Rules
+	•	Admin does NOT use normal login
+	•	Admin lives at a separate URL (e.g. /admin)
+	•	Admin logs in using:
+	•	Username
+	•	Password
+	•	Admin has full backend control
+
+⸻
+
+Admin Capabilities
+
+Admin can:
+	•	View all users
+	•	View all orders
+	•	View all transport jobs
+	•	Resolve disputes
+	•	Adjust escrow
+	•	Suspend users
+	•	Override roles
+	•	Enable/disable features
+	•	Monitor platform KPIs
+
+Admin UI must:
+	•	Never appear to users
+	•	Be server-side protected
+	•	Have no shared auth logic with user login
+
+⸻
+
+🔐 SECURITY & ACCESS CONTROL (MANDATORY)
+	•	Role checks enforced server-side
+	•	Dashboards rendered based on role
+	•	APIs restricted by role
+	•	Admin routes inaccessible to users
+	•	No client-side role trust
+
+⸻
+
+🗄️ DATA MODEL REQUIREMENTS
+
+Extend or normalize:
+	•	Users (id, username, password_hash, role)
+	•	Sessions
+	•	RolePermissions
+	•	AdminCredentials (separate table)
+
+Do NOT duplicate user tables.
+
+⸻
+
+🧪 TESTING REQUIREMENTS
+
+Provide test users:
+	•	Farmer test account
+	•	Buyer test account
+	•	Transporter test account
+	•	Admin test account
+
+Each role must:
+	•	Login cleanly
+	•	Land on correct dashboard
+	•	Be blocked from other role features
+
+⸻
+
+🚫 OUT OF SCOPE
+	•	No social login
+	•	No role switching UI
+	•	No multi-role accounts
+	•	No frontend-only role logic
+
+⸻
+
+✅ SUCCESS CRITERIA
+	•	Clean registration flow
+	•	Predictable login behavior
+	•	Role-specific dashboards
+	•	Transport logic works correctly
+	•	Admin has full backend visibility
+	•	No role confusion anywhere in the app
+
+⸻
+
+FINAL, IMPORTANT GUIDANCE
+
+This refactor is foundational.
+If roles are messy, everything else breaks — transport, escrow, contracts, trust.
+
+Fix this once. Fix it cleanly.

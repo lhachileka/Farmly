@@ -1,0 +1,226 @@
+Replit Prompt: Extend Farmly Insights Page with Tiered Analytics & Subscription Readiness
+
+Context
+
+Farmly is a live agri-marketplace app with three roles:
+	•	Farmers
+	•	Buyers
+	•	Transporters
+
+An Insights page already exists with basic analytics.
+We are building on top of it, not replacing it.
+
+Goal:
+Turn Insights into a decision-making engine that adapts to user scale, while preparing for tiered subscriptions.
+
+⚠️ Do NOT remove or break existing insights.
+⚠️ Extend current logic and UI.
+
+⸻
+
+🎯 CORE OBJECTIVES
+	1.	Enhance Insights with market intelligence, predictive signals, and AI guidance
+	2.	Introduce 4 subscription tiers, aligned with user scale
+	3.	Keep all features accessible for now
+	4.	Implement feature gating logic (flags) for future paywall activation
+	5.	Ensure insights are role-aware and personalized
+
+⸻
+
+📊 INSIGHTS FEATURES TO ADD (EXTENSION ONLY)
+
+1. Market Intelligence Layer
+
+Add advanced insights for:
+	•	Produce
+	•	Livestock
+	•	Processed goods
+	•	Transport demand
+
+New insights include:
+	•	Price volatility indicators
+	•	Supply vs demand pressure signals
+	•	Location-based price spreads
+	•	Best buy / sell / hold windows
+	•	Undervalued & overheated markets
+
+All insights must:
+	•	Be timestamped
+	•	Show confidence level (low / medium / high)
+	•	Include a short “Why this insight?” explanation
+
+⸻
+
+2. Transport-Specific Intelligence
+
+Extend insights for transporters:
+	•	High-demand routes forecast
+	•	Route profitability score
+	•	Peak transport windows
+	•	Idle-risk warnings
+	•	Fleet utilization insights (if multiple vehicles)
+
+Buyers & farmers see:
+	•	Transport availability risk alerts
+	•	Expected transport cost movement
+
+⸻
+
+3. Contract & Relationship Insights
+
+Add analytics related to:
+	•	Contract pricing vs live market
+	•	Best time to lock long-term contracts
+	•	Buyer reliability score
+	•	Farmer fulfillment score
+	•	Transporter reliability & delay index
+
+These insights support:
+	•	Subscriptions
+	•	Favourites
+	•	Repeat business
+
+⸻
+
+4. Personalized Action Feed (Critical)
+
+Add a section at the top of Insights:
+“What You Should Do Now”
+
+AI-generated, role-specific actions:
+	•	Buy / sell / wait recommendations
+	•	Prepare transport capacity
+	•	Adjust pricing
+	•	Engage favourite partners
+
+This feed must prioritize:
+	1.	Urgency
+	2.	Financial impact
+	3.	User role
+
+⸻
+
+💳 SUBSCRIPTION TIERS (INSIGHTS-ONLY)
+
+Tier 1: Starter (Small Scale)
+
+Target:
+	•	Small farmers
+	•	Individual buyers
+	•	Single-truck transporters
+
+Includes:
+	•	Basic market trends
+	•	Historical price charts
+	•	Personal performance stats
+	•	Limited alerts (non-predictive)
+
+⸻
+
+Tier 2: Growth (Medium Scale)
+
+Includes Starter +
+	•	Supply-demand pressure signals
+	•	Location-based price comparisons
+	•	Transport demand heatmaps
+	•	Basic AI recommendations (short horizon)
+
+⸻
+
+Tier 3: Pro (Large Scale)
+
+Includes Growth +
+	•	Predictive price movements
+	•	Best timing to sell / buy / contract
+	•	Route profitability forecasts
+	•	Contract benchmarking
+	•	Early alerts (ahead of general market)
+
+⸻
+
+Tier 4: Commercial / Enterprise
+
+Includes Pro +
+	•	Long-horizon forecasting
+	•	Bulk & fleet optimization insights
+	•	Risk & disruption alerts
+	•	Market manipulation detection (sudden spikes/drops)
+	•	Competitive positioning insights
+	•	Priority data refresh frequency
+
+⸻
+
+🔐 FEATURE GATING (IMPORTANT)
+
+For now:
+	•	All tiers have access to all features
+
+But:
+	•	Implement a subscription_tier check for every insight
+	•	Use feature flags like:
+	•	requiresTier: PRO
+	•	requiresTier: ENTERPRISE
+
+When paywall is activated later:
+	•	No refactor required
+	•	Just toggle access rules
+
+⸻
+
+🧠 AI INSIGHT ENGINE RULES
+
+AI insights must:
+	•	Be explainable
+	•	Never give absolute financial guarantees
+	•	Use probabilistic language
+	•	Be based on:
+	•	Platform activity
+	•	Historical data
+	•	Seasonal patterns
+	•	User behavior
+	•	Market velocity
+
+⸻
+
+🧱 DATA & ARCHITECTURE (EXTEND ONLY)
+
+Add or extend:
+	•	Insights
+	•	type
+	•	role
+	•	confidence
+	•	required_tier
+	•	expires_at
+	•	Subscriptions
+	•	user_id
+	•	tier
+	•	status
+	•	future_price (optional)
+
+Do NOT hardcode pricing yet.
+
+⸻
+
+🎨 UI / UX REQUIREMENTS
+	•	Insights page must remain clean and scannable
+	•	Use cards, not tables
+	•	Color-code signals (opportunity / risk / neutral)
+	•	Add tooltips for AI explanations
+	•	Show locked icons (disabled for now, informational only)
+
+⸻
+
+✅ SUCCESS CRITERIA
+	•	Insights feel actionable, not academic
+	•	Users open Insights even when not transacting
+	•	Clear differentiation between tiers
+	•	Zero disruption to existing Insights
+	•	Easy monetization later
+
+⸻
+
+FINAL NOTE (IMPORTANT)
+
+This Insights system is your monetization engine, not ads, not fees.
+
+If users rely on it to make money, they will pay.
