@@ -32,6 +32,9 @@ export default function Cart() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
     },
+    onError: () => {
+      toast({ title: "Failed to update quantity", variant: "destructive" });
+    },
   });
 
   const removeMutation = useMutation({
@@ -39,6 +42,9 @@ export default function Cart() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
       toast({ title: "Item removed from cart" });
+    },
+    onError: () => {
+      toast({ title: "Failed to remove item", variant: "destructive" });
     },
   });
 
@@ -48,13 +54,26 @@ export default function Cart() {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
       toast({ title: "Cart cleared" });
     },
+    onError: () => {
+      toast({ title: "Failed to clear cart", variant: "destructive" });
+    },
   });
 
   if (userLoading) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="container mx-auto px-4 py-8 space-y-4">
+          <div className="h-8 bg-muted animate-pulse rounded w-32" />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex gap-4 rounded-lg border bg-card p-4">
+              <div className="h-20 w-20 bg-muted animate-pulse rounded" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+                <div className="h-5 bg-muted animate-pulse rounded w-20" />
+              </div>
+            </div>
+          ))}
         </div>
       </Layout>
     );
@@ -96,8 +115,18 @@ export default function Cart() {
   if (cartLoading) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="container mx-auto px-4 py-8 space-y-4">
+          <div className="h-8 bg-muted animate-pulse rounded w-32" />
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="flex gap-4 rounded-lg border bg-card p-4">
+              <div className="h-20 w-20 bg-muted animate-pulse rounded" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+                <div className="h-5 bg-muted animate-pulse rounded w-20" />
+              </div>
+            </div>
+          ))}
         </div>
       </Layout>
     );

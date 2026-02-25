@@ -73,8 +73,25 @@ export default function Dashboard() {
   if (userLoading) {
     return (
       <Layout>
-        <div className="container mx-auto px-4 py-20 flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="container mx-auto px-4 py-6 space-y-6">
+          <div className="h-8 bg-muted animate-pulse rounded w-48" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-lg border bg-card p-6 space-y-3">
+                <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
+                <div className="h-8 bg-muted animate-pulse rounded w-20" />
+                <div className="h-3 bg-muted animate-pulse rounded w-3/4" />
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-lg border bg-card p-4 space-y-2">
+                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+              </div>
+            ))}
+          </div>
         </div>
       </Layout>
     );
@@ -709,8 +726,14 @@ function FarmerDashboard({ user }: { user: User }) {
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="rounded-lg border bg-card p-4 space-y-3">
+                <div className="h-32 bg-muted animate-pulse rounded" />
+                <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+                <div className="h-3 bg-muted animate-pulse rounded w-1/2" />
+              </div>
+            ))}
           </div>
         ) : myListings.length === 0 ? (
           <Card>

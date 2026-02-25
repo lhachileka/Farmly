@@ -1,4 +1,5 @@
 import { Link, useLocation } from "wouter";
+import { OfflineBanner } from "@/components/offline-banner";
 import { Search, ShoppingCart, User, Bell, Sprout, Sun, Moon, Check, Heart, Store, Users, FileText, TrendingUp, LayoutDashboard, MessageCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -50,6 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background font-sans text-foreground flex flex-col">
+      <OfflineBanner />
       {/* Navbar */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">

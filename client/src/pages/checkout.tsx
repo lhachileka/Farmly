@@ -128,13 +128,20 @@ export default function Checkout() {
       queryClient.invalidateQueries({ queryKey: ["/api/cart"] });
       setCreatedOrders(data.orders);
       setOrderSuccess(true);
-      
+
+      // Redirect to Flutterwave payment page if available
+      if (data.paymentLink) {
+        toast({ title: "Redirecting to payment..." });
+        window.location.href = data.paymentLink;
+        return;
+      }
+
       if (includeTransport) {
         if (data.transportRequestSuccess) {
           toast({ title: "Order placed with transport request!" });
         } else {
-          toast({ 
-            title: "Order placed", 
+          toast({
+            title: "Order placed",
             description: "Transport request could not be processed. You can set it up later.",
             variant: "default"
           });

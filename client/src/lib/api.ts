@@ -481,7 +481,7 @@ export const ordersApi = {
     accountNumber?: string;
   }) => {
     const res = await apiRequest("POST", "/api/checkout", data);
-    return await res.json() as { orders: Order[] };
+    return await res.json() as { orders: Order[]; paymentLink?: string };
   },
 
   getAll: async (role: "buyer" | "seller" = "buyer") => {

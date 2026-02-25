@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Layout } from "@/components/layout";
@@ -81,7 +81,16 @@ export default function Settings() {
     confirmPassword: "",
   });
 
-  useState(() => {
+  const { data: savedNotifPrefs } = useQuery({
+    queryKey: ["/api/auth/notification-prefs"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/auth/notification-prefs");
+      return res.json();
+    },
+    enabled: !!currentUser,
+  });
+
+  useEffect(() => {
     if (currentUser) {
       setAccountForm({
         name: currentUser.name || "",
@@ -91,7 +100,13 @@ export default function Settings() {
         businessName: (currentUser as any).businessName || "",
       });
     }
-  });
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (savedNotifPrefs) {
+      setNotificationPrefs(savedNotifPrefs);
+    }
+  }, [savedNotifPrefs]);
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: typeof accountForm) => {
@@ -104,6 +119,36 @@ export default function Settings() {
     },
     onError: () => {
       toast({ title: "Error", description: "Failed to update profile", variant: "destructive" });
+    },
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async (data: typeof passwordForm) => {
+      const res = await apiRequest("POST", "/api/auth/change-password", {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      toast({ title: "Password updated successfully" });
+    },
+    onError: (error: any) => {
+      toast({ title: "Error", description: error?.message || "Failed to change password", variant: "destructive" });
+    },
+  });
+
+  const saveNotificationsMutation = useMutation({
+    mutationFn: async (prefs: typeof notificationPrefs) => {
+      const res = await apiRequest("PUT", "/api/auth/notification-prefs", prefs);
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Notification preferences saved" });
+    },
+    onError: () => {
+      toast({ title: "Error", description: "Failed to save preferences", variant: "destructive" });
     },
   });
 
@@ -373,8 +418,17 @@ export default function Settings() {
                 </div>
 
                 <div className="flex justify-end pt-4">
-                  <Button data-testid="button-save-notifications">
-                    <Save className="h-4 w-4 mr-2" /> Save Preferences
+                  <Button
+                    onClick={() => saveNotificationsMutation.mutate(notificationPrefs)}
+                    disabled={saveNotificationsMutation.isPending}
+                    data-testid="button-save-notifications"
+                  >
+                    {saveNotificationsMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
+                    Save Preferences
                   </Button>
                 </div>
               </CardContent>
@@ -437,11 +491,17 @@ export default function Settings() {
                   </div>
                 </div>
                 <div className="flex justify-end pt-4">
-                  <Button 
-                    disabled={!passwordForm.currentPassword || !passwordForm.newPassword || passwordForm.newPassword !== passwordForm.confirmPassword}
+                  <Button
+                    onClick={() => changePasswordMutation.mutate(passwordForm)}
+                    disabled={!passwordForm.currentPassword || !passwordForm.newPassword || passwordForm.newPassword !== passwordForm.confirmPassword || changePasswordMutation.isPending}
                     data-testid="button-change-password"
                   >
-                    <Lock className="h-4 w-4 mr-2" /> Update Password
+                    {changePasswordMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Lock className="h-4 w-4 mr-2" />
+                    )}
+                    Update Password
                   </Button>
                 </div>
               </CardContent>

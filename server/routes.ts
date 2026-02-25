@@ -1,7 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import bcrypt from "bcrypt";
 import { storage } from "./storage";
 import { aiService } from "./ai-service";
+import { initiatePayment, verifyTransaction, verifyWebhookSignature } from "./flutterwave";
+import { notify } from "./notify";
+
+const SALT_ROUNDS = 12;
 import { 
   insertUserSchema, 
   insertListingSchema,
@@ -52,12 +57,13 @@ export async function registerRoutes(
     try {
       const validatedData = insertUserSchema.parse(req.body);
       const existingUser = await storage.getUserByUsername(validatedData.username);
-      
+
       if (existingUser) {
         return res.status(400).json({ error: "Username already exists" });
       }
-      
-      const user = await storage.createUser(validatedData);
+
+      const hashedPassword = await bcrypt.hash(validatedData.password, SALT_ROUNDS);
+      const user = await storage.createUser({ ...validatedData, password: hashedPassword });
       const { password, ...userWithoutPassword } = user;
       
       if (req.session) {
@@ -69,6 +75,7 @@ export async function registerRoutes(
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
       }
+      console.error("Registration error:", error);
       res.status(500).json({ error: "Failed to create user" });
     }
   });
@@ -77,15 +84,33 @@ export async function registerRoutes(
     try {
       const { username, password } = req.body;
       const user = await storage.getUserByUsername(username);
-      
-      if (!user || user.password !== password) {
+
+      if (!user) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-      
+
+      const isBcryptHash = user.password.startsWith("$2b$") || user.password.startsWith("$2a$");
+      let passwordValid = false;
+
+      if (isBcryptHash) {
+        passwordValid = await bcrypt.compare(password, user.password);
+      } else {
+        // Legacy plain-text password — compare directly, then hash on success
+        passwordValid = user.password === password;
+        if (passwordValid) {
+          const hashed = await bcrypt.hash(password, SALT_ROUNDS);
+          await storage.updateUser(user.id, { password: hashed });
+        }
+      }
+
+      if (!passwordValid) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
       if (req.session) {
         req.session.userId = user.id;
       }
-      
+
       const { password: _, ...userWithoutPassword } = user;
       res.json(userWithoutPassword);
     } catch (error) {
@@ -115,6 +140,82 @@ export async function registerRoutes(
     
     const { password, ...userWithoutPassword } = user;
     res.json(userWithoutPassword);
+  });
+
+  // Profile update
+  app.put("/api/auth/profile", requireAuth, async (req, res) => {
+    try {
+      const userId = req.session!.userId as string;
+      const { name, email, phone, location } = req.body;
+      const updated = await storage.updateUser(userId, {
+        ...(name !== undefined && { name }),
+        ...(email !== undefined && { email }),
+        ...(phone !== undefined && { phone }),
+        ...(location !== undefined && { location }),
+      });
+      const { password, ...userWithoutPassword } = updated;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update profile" });
+    }
+  });
+
+  // Change password
+  app.post("/api/auth/change-password", requireAuth, async (req, res) => {
+    try {
+      const userId = req.session!.userId as string;
+      const { currentPassword, newPassword } = req.body;
+
+      if (!currentPassword || !newPassword || newPassword.length < 6) {
+        return res.status(400).json({ error: "New password must be at least 6 characters" });
+      }
+
+      const user = await storage.getUser(userId);
+      if (!user) return res.status(404).json({ error: "User not found" });
+
+      const isBcryptHash = user.password.startsWith("$2b$") || user.password.startsWith("$2a$");
+      const valid = isBcryptHash
+        ? await bcrypt.compare(currentPassword, user.password)
+        : currentPassword === user.password;
+
+      if (!valid) {
+        return res.status(401).json({ error: "Current password is incorrect" });
+      }
+
+      const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+      await storage.updateUser(userId, { password: hashed });
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to change password" });
+    }
+  });
+
+  // Notification preferences
+  app.get("/api/auth/notification-prefs", requireAuth, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.session!.userId as string);
+      if (!user) return res.status(404).json({ error: "User not found" });
+      res.json(user.notificationPrefs || {
+        emailNotifications: true,
+        smsNotifications: false,
+        orderUpdates: true,
+        priceAlerts: true,
+        marketNews: false,
+        contractReminders: true,
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch notification preferences" });
+    }
+  });
+
+  app.put("/api/auth/notification-prefs", requireAuth, async (req, res) => {
+    try {
+      const userId = req.session!.userId as string;
+      const updated = await storage.updateUser(userId, { notificationPrefs: req.body });
+      res.json(updated.notificationPrefs);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update notification preferences" });
+    }
   });
 
   app.get("/api/listings", async (req, res) => {
@@ -1218,7 +1319,7 @@ export async function registerRoutes(
           }))
         );
 
-        await storage.createPayment({
+        const payment = await storage.createPayment({
           orderId: order.id,
           method: validatedData.paymentMethod,
           amount: total,
@@ -1227,23 +1328,45 @@ export async function registerRoutes(
           accountNumber: validatedData.accountNumber || null,
         });
 
-        const seller = await storage.getUser(sellerId);
-        if (seller) {
-          await storage.createNotification({
+        await notify({
+          notification: {
             userId: sellerId,
             type: "order",
             title: "New Order Received",
             message: `You have received a new order worth K${(total / 100).toLocaleString()}`,
             link: `/orders/${order.id}`,
-          });
-        }
+          },
+          smsMessage: `Farmly: New order worth K${(total / 100).toLocaleString()} received. Check your dashboard.`,
+        });
 
-        createdOrders.push(order);
+        createdOrders.push({ ...order, paymentId: payment.id });
       }
 
       await storage.clearCart(userId);
 
-      res.status(201).json({ orders: createdOrders });
+      // Initiate Flutterwave payment for total amount across all orders
+      const buyer = await storage.getUser(userId);
+      const grandTotal = createdOrders.reduce((sum, o) => sum + o.total, 0);
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+
+      let paymentLink = null;
+      try {
+        const flwResult = await initiatePayment({
+          orderId: createdOrders.map(o => o.id).join(","),
+          amount: grandTotal,
+          currency: "ZMW",
+          paymentMethod: validatedData.paymentMethod,
+          phoneNumber: validatedData.phoneNumber,
+          email: buyer?.email || "customer@farmly.zm",
+          name: buyer?.name || "Farmly Customer",
+          redirectUrl: `${baseUrl}/payment-callback`,
+        });
+        paymentLink = flwResult.paymentLink;
+      } catch (flwError) {
+        console.error("Flutterwave initiation failed, orders created without payment link:", flwError);
+      }
+
+      res.status(201).json({ orders: createdOrders, paymentLink });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });
@@ -1309,12 +1432,15 @@ export async function registerRoutes(
       await storage.updatePaymentStatus(order.id, "completed", providerReference);
       const updatedOrder = await storage.updateOrderStatus(order.id, "paid", { paidAt: new Date() });
 
-      await storage.createNotification({
-        userId: order.sellerId,
-        type: "order",
-        title: "Payment Received",
-        message: `Payment of K${(order.total / 100).toLocaleString()} has been received and held in escrow`,
-        link: `/orders/${order.id}`,
+      await notify({
+        notification: {
+          userId: order.sellerId,
+          type: "order",
+          title: "Payment Received",
+          message: `Payment of K${(order.total / 100).toLocaleString()} has been received and held in escrow`,
+          link: `/orders/${order.id}`,
+        },
+        smsMessage: `Farmly: Payment of K${(order.total / 100).toLocaleString()} received for your order. Prepare for shipment.`,
       });
 
       // Auto-create transport job for this order
@@ -1393,12 +1519,15 @@ export async function registerRoutes(
 
       const updatedOrder = await storage.updateOrderStatus(order.id, "shipped", { shippedAt: new Date() });
 
-      await storage.createNotification({
-        userId: order.buyerId,
-        type: "order",
-        title: "Order Shipped",
-        message: `Your order has been shipped and is on its way`,
-        link: `/orders/${order.id}`,
+      await notify({
+        notification: {
+          userId: order.buyerId,
+          type: "order",
+          title: "Order Shipped",
+          message: `Your order has been shipped and is on its way`,
+          link: `/orders/${order.id}`,
+        },
+        smsMessage: `Farmly: Your order has been shipped and is on its way!`,
       });
 
       res.json(updatedOrder);
@@ -1432,12 +1561,15 @@ export async function registerRoutes(
         disputeDeadline,
       });
 
-      await storage.createNotification({
-        userId: order.sellerId,
-        type: "order",
-        title: "Delivery Confirmed",
-        message: `Buyer has confirmed delivery. Funds will be released in 7 days if no dispute is raised.`,
-        link: `/orders/${order.id}`,
+      await notify({
+        notification: {
+          userId: order.sellerId,
+          type: "order",
+          title: "Delivery Confirmed",
+          message: `Buyer has confirmed delivery. Funds will be released in 7 days if no dispute is raised.`,
+          link: `/orders/${order.id}`,
+        },
+        smsMessage: `Farmly: Delivery confirmed! Funds will be released in 7 days.`,
       });
 
       res.json(updatedOrder);
@@ -1466,12 +1598,15 @@ export async function registerRoutes(
       await storage.releaseEscrow(order.id);
       const updatedOrder = await storage.updateOrderStatus(order.id, "completed", { completedAt: new Date() });
 
-      await storage.createNotification({
-        userId: order.sellerId,
-        type: "order",
-        title: "Payment Released",
-        message: `Funds of K${(order.total / 100).toLocaleString()} have been released to your account`,
-        link: `/orders/${order.id}`,
+      await notify({
+        notification: {
+          userId: order.sellerId,
+          type: "order",
+          title: "Payment Released",
+          message: `Funds of K${(order.total / 100).toLocaleString()} have been released to your account`,
+          link: `/orders/${order.id}`,
+        },
+        smsMessage: `Farmly: K${(order.total / 100).toLocaleString()} has been released to your account!`,
       });
 
       res.json(updatedOrder);
@@ -3776,6 +3911,60 @@ export async function registerRoutes(
     } catch (error) {
       console.error("Get fee history error:", error);
       res.status(500).json({ error: "Failed to get fee history" });
+    }
+  });
+
+  // Flutterwave webhook
+  app.post("/api/webhooks/flutterwave", async (req, res) => {
+    try {
+      const secretHash = process.env.FLW_SECRET_HASH || "";
+      const signature = req.headers["verif-hash"] as string;
+
+      if (!secretHash || !verifyWebhookSignature(secretHash, signature)) {
+        return res.status(401).json({ error: "Invalid signature" });
+      }
+
+      const { event, data } = req.body;
+
+      if (event === "charge.completed" && data.status === "successful") {
+        const orderIds = data.meta?.order_id?.split(",") || [];
+
+        for (const orderId of orderIds) {
+          const order = await storage.getOrder(orderId);
+          if (!order) continue;
+
+          // Update payment and order status
+          await storage.updatePaymentStatus(orderId, "completed", data.flw_ref);
+          await storage.updateOrderStatus(orderId, "paid");
+
+          // Notify seller
+          await notify({
+            notification: {
+              userId: order.sellerId,
+              type: "order",
+              title: "Payment Received",
+              message: `Payment of K${(order.total / 100).toLocaleString()} received for order`,
+              link: `/orders/${orderId}`,
+            },
+            smsMessage: `Farmly: Payment of K${(order.total / 100).toLocaleString()} received for your order!`,
+          });
+        }
+      }
+
+      res.status(200).json({ status: "ok" });
+    } catch (error) {
+      console.error("Flutterwave webhook error:", error);
+      res.status(500).json({ error: "Webhook processing failed" });
+    }
+  });
+
+  // Payment verification endpoint (for callback page)
+  app.get("/api/payment/verify/:transactionId", requireAuth, async (req, res) => {
+    try {
+      const result = await verifyTransaction(req.params.transactionId);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ error: "Verification failed" });
     }
   });
 

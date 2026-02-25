@@ -36,6 +36,14 @@ export const users = pgTable("users", {
   rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
   verified: boolean("verified").default(false).notNull(),
   trustScore: integer("trust_score").default(50).notNull(),
+  notificationPrefs: jsonb("notification_prefs").default({
+    emailNotifications: true,
+    smsNotifications: false,
+    orderUpdates: true,
+    priceAlerts: true,
+    marketNews: false,
+    contractReminders: true,
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

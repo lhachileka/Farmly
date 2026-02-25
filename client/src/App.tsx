@@ -27,6 +27,7 @@ import Messages from "@/pages/messages";
 import GradeStandards from "@/pages/grade-standards";
 import Settings from "@/pages/settings";
 import AdminFees from "@/pages/admin-fees";
+import PaymentCallback from "@/pages/payment-callback";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/messages/:chatId" component={Messages} />
       <Route path="/grade-standards" component={GradeStandards} />
       <Route path="/settings" component={Settings} />
+      <Route path="/payment-callback" component={PaymentCallback} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

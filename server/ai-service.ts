@@ -12,10 +12,12 @@ import {
 } from "@shared/schema";
 import { eq, desc, and, gte, sql } from "drizzle-orm";
 
-const openai = new OpenAI({
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-});
+const openai = process.env.AI_INTEGRATIONS_OPENAI_API_KEY
+  ? new OpenAI({
+      apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+    })
+  : null;
 
 type AIDecisionType = "delivery_verification" | "chat_monitoring" | "dispute_analysis" | "trust_score_update" | "price_suggestion";
 type AIDecisionResult = "auto_approved" | "flagged_for_review" | "rejected" | "warning_issued" | "action_taken";
