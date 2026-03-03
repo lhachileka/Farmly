@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
@@ -11,7 +11,6 @@ import Marketplace from "@/pages/marketplace";
 import ProductDetails from "@/pages/product";
 import Dashboard from "@/pages/dashboard";
 import Logistics from "@/pages/logistics";
-import Insights from "@/pages/insights";
 import AuthPage from "@/pages/auth";
 import Admin from "@/pages/admin";
 import Cart from "@/pages/cart";
@@ -39,7 +38,7 @@ function Router() {
       <Route path="/product/:id" component={ProductDetails} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/logistics" component={Logistics} />
-      <Route path="/insights" component={Insights} />
+      <Route path="/insights" component={() => <Redirect to="/dashboard" />} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/admin" component={Admin} />
       <Route path="/admin/fees" component={AdminFees} />

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { OfflineBanner } from "@/components/offline-banner";
-import { Search, ShoppingCart, User, Bell, Sprout, Sun, Moon, Check, Heart, Store, Users, FileText, TrendingUp, LayoutDashboard, MessageCircle, Settings } from "lucide-react";
+import { Search, ShoppingCart, User, Bell, Sprout, Sun, Moon, Check, Heart, Store, Users, FileText, LayoutDashboard, MessageCircle, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -77,9 +77,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Link>
             <Link href="/logistics" className={`transition-colors hover:text-primary ${isActive("/logistics") ? "text-primary" : "text-muted-foreground"}`}>
               Logistics
-            </Link>
-            <Link href="/insights" className={`transition-colors hover:text-primary ${isActive("/insights") ? "text-primary" : "text-muted-foreground"}`}>
-              Insights
             </Link>
             <Link href="/dashboard" className={`transition-colors hover:text-primary ${isActive("/dashboard") ? "text-primary" : "text-muted-foreground"}`}>
               Dashboard

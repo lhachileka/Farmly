@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, Link } from "wouter";
 import { Layout } from "@/components/layout";
@@ -53,12 +53,245 @@ import {
   Target,
   TrendingDown,
   Send,
-  ThumbsUp
+  ThumbsUp,
+  Minus,
+  MapPin
 } from "lucide-react";
-import { authApi, listingsApi, bidsApi, ordersApi, contractsApi, coopsApi, subscriptionsApi, forecastsApi, transportJobsApi, type Listing, type User, type Order, type DemandForecast, type ForecastResponse, type TransportJob, type TransportOffer } from "@/lib/api";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer
+} from "recharts";
+import { authApi, listingsApi, bidsApi, ordersApi, contractsApi, coopsApi, subscriptionsApi, forecastsApi, transportJobsApi, insightsApi, type Listing, type User, type Order, type DemandForecast, type ForecastResponse, type TransportJob, type TransportOffer } from "@/lib/api";
 import { CheckCircle, Clock, AlertCircle, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { format } from "date-fns";
+
+const REGIONAL_PRICES = [
+  { region: "Lusaka", commodity: "Maize", price: 70, trend: "up" },
+  { region: "Ndola", commodity: "Maize", price: 72, trend: "up" },
+  { region: "Kitwe", commodity: "Maize", price: 68, trend: "stable" },
+  { region: "Livingstone", commodity: "Maize", price: 65, trend: "down" },
+];
+
+function MarketOverview() {
+  const selectedRegion = "Lusaka";
+  const selectedDays = 7;
+
+  const { data: tomatoHistory = [] } = useQuery({
+    queryKey: ["/api/insights/price-history", "Tomatoes", selectedRegion, selectedDays],
+    queryFn: () => insightsApi.getPriceHistory("Tomatoes", selectedRegion, selectedDays),
+  });
+
+  const { data: maizeHistory = [] } = useQuery({
+    queryKey: ["/api/insights/price-history", "Maize", selectedRegion, selectedDays],
+    queryFn: () => insightsApi.getPriceHistory("Maize", selectedRegion, selectedDays),
+  });
+
+  const { data: cabbageHistory = [] } = useQuery({
+    queryKey: ["/api/insights/price-history", "Cabbage", selectedRegion, selectedDays],
+    queryFn: () => insightsApi.getPriceHistory("Cabbage", selectedRegion, selectedDays),
+  });
+
+  const chartData = useMemo(() => {
+    const allDates = new Set([
+      ...tomatoHistory.map((h: any) => h.recordedAt),
+      ...maizeHistory.map((h: any) => h.recordedAt),
+      ...cabbageHistory.map((h: any) => h.recordedAt),
+    ]);
+
+    return Array.from(allDates)
+      .sort()
+      .slice(-selectedDays)
+      .map(date => {
+        const tomato = tomatoHistory.find((h: any) => h.recordedAt === date);
+        const maize = maizeHistory.find((h: any) => h.recordedAt === date);
+        const cabbage = cabbageHistory.find((h: any) => h.recordedAt === date);
+
+        return {
+          date: format(new Date(date), "MMM dd"),
+          tomato: tomato?.price || 0,
+          maize: maize?.price || 0,
+          cabbage: cabbage?.price || 0,
+        };
+      });
+  }, [tomatoHistory, maizeHistory, cabbageHistory, selectedDays]);
+
+  const currentPrices = useMemo(() => {
+    const latestTomato = tomatoHistory[tomatoHistory.length - 1];
+    const latestMaize = maizeHistory[maizeHistory.length - 1];
+    const latestCabbage = cabbageHistory[cabbageHistory.length - 1];
+
+    const calculateTrend = (history: any[]): number => {
+      if (history.length < 2) return 0;
+      const current = history[history.length - 1].price;
+      const previous = history[history.length - 2].price;
+      return parseFloat(((current - previous) / previous * 100).toFixed(1));
+    };
+
+    return {
+      tomato: { price: latestTomato?.price || 0, trend: calculateTrend(tomatoHistory) },
+      maize: { price: latestMaize?.price || 0, trend: calculateTrend(maizeHistory) },
+      cabbage: { price: latestCabbage?.price || 0, trend: calculateTrend(cabbageHistory) },
+    };
+  }, [tomatoHistory, maizeHistory, cabbageHistory]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="font-heading text-xl font-bold flex items-center gap-2">
+          <BarChart3 className="h-5 w-5 text-primary" />
+          Market Overview
+        </h2>
+        <Badge variant="outline" className="gap-1">
+          <MapPin className="h-3 w-3" /> {selectedRegion}
+        </Badge>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-l-4 border-l-green-500">
+          <CardContent className="p-5">
+            <div className="flex justify-between items-start mb-1">
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">Maize (per kg)</div>
+                <div className="text-2xl font-bold">K {currentPrices.maize.price}</div>
+              </div>
+              <Badge className={`${
+                currentPrices.maize.trend > 0 ? 'bg-green-100 text-green-700' :
+                currentPrices.maize.trend < 0 ? 'bg-red-100 text-red-700' :
+                'bg-gray-100 text-gray-700'
+              } hover:bg-current border-none flex gap-1`}>
+                {currentPrices.maize.trend > 0 ? <TrendingUp className="h-3 w-3" /> :
+                 currentPrices.maize.trend < 0 ? <TrendingDown className="h-3 w-3" /> :
+                 <Minus className="h-3 w-3" />}
+                {currentPrices.maize.trend > 0 ? '+' : ''}{currentPrices.maize.trend}%
+              </Badge>
+            </div>
+            <div className="text-xs text-muted-foreground">Avg. price in {selectedRegion} today</div>
+          </CardContent>
+        </Card>
+        <Card className="border-l-4 border-l-red-500">
+          <CardContent className="p-5">
+            <div className="flex justify-between items-start mb-1">
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">Tomatoes (per kg)</div>
+                <div className="text-2xl font-bold">K {currentPrices.tomato.price}</div>
+              </div>
+              <Badge className={`${
+                currentPrices.tomato.trend > 0 ? 'bg-green-100 text-green-700' :
+                currentPrices.tomato.trend < 0 ? 'bg-red-100 text-red-700' :
+                'bg-gray-100 text-gray-700'
+              } hover:bg-current border-none flex gap-1`}>
+                {currentPrices.tomato.trend > 0 ? <TrendingUp className="h-3 w-3" /> :
+                 currentPrices.tomato.trend < 0 ? <TrendingDown className="h-3 w-3" /> :
+                 <Minus className="h-3 w-3" />}
+                {currentPrices.tomato.trend > 0 ? '+' : ''}{currentPrices.tomato.trend}%
+              </Badge>
+            </div>
+            <div className="text-xs text-muted-foreground">{selectedRegion} market price</div>
+          </CardContent>
+        </Card>
+        <Card className="border-l-4 border-l-amber-500">
+          <CardContent className="p-5">
+            <div className="flex justify-between items-start mb-1">
+              <div>
+                <div className="text-sm font-medium text-muted-foreground">Cabbage (per kg)</div>
+                <div className="text-2xl font-bold">K {currentPrices.cabbage.price}</div>
+              </div>
+              <Badge className={`${
+                currentPrices.cabbage.trend > 0 ? 'bg-green-100 text-green-700' :
+                currentPrices.cabbage.trend < 0 ? 'bg-red-100 text-red-700' :
+                'bg-gray-100 text-gray-700'
+              } hover:bg-current border-none flex gap-1`}>
+                {currentPrices.cabbage.trend > 0 ? <TrendingUp className="h-3 w-3" /> :
+                 currentPrices.cabbage.trend < 0 ? <TrendingDown className="h-3 w-3" /> :
+                 <Minus className="h-3 w-3" />}
+                {currentPrices.cabbage.trend > 0 ? '+' : ''}{currentPrices.cabbage.trend}%
+              </Badge>
+            </div>
+            <div className="text-xs text-muted-foreground">{selectedRegion} market price</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">7-Day Price Trends</CardTitle>
+            <CardDescription>Comparative pricing for key commodities (Kwacha)</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="dashColorMaize" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#eab308" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#eab308" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="dashColorTomato" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="dashColorCabbage" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fill: 'hsl(var(--muted-foreground))'}} />
+                <YAxis axisLine={false} tickLine={false} tick={{fill: 'hsl(var(--muted-foreground))'}} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                />
+                <Area type="monotone" dataKey="maize" stroke="#eab308" strokeWidth={2} fillOpacity={1} fill="url(#dashColorMaize)" name="Maize (K/kg)" />
+                <Area type="monotone" dataKey="tomato" stroke="#ef4444" strokeWidth={2} fillOpacity={1} fill="url(#dashColorTomato)" name="Tomato (K/kg)" />
+                <Area type="monotone" dataKey="cabbage" stroke="#10b981" strokeWidth={2} fillOpacity={1} fill="url(#dashColorCabbage)" name="Cabbage (K/kg)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Regional Averages</CardTitle>
+            <CardDescription>Maize (50kg) prices by province</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y">
+              {REGIONAL_PRICES.map((item, idx) => (
+                <div key={idx} className="p-3 flex items-center justify-between hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center gap-2">
+                    <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                      {item.region.charAt(0)}
+                    </div>
+                    <div className="font-medium text-sm">{item.region}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-sm">K {item.price}</div>
+                    <div className={`text-xs flex items-center justify-end gap-1 ${
+                      item.trend === 'up' ? 'text-red-500' : item.trend === 'down' ? 'text-green-500' : 'text-muted-foreground'
+                    }`}>
+                      {item.trend === 'up' ? <TrendingUp className="h-3 w-3" /> :
+                       item.trend === 'down' ? <TrendingDown className="h-3 w-3" /> :
+                       <Minus className="h-3 w-3" />}
+                      {item.trend === 'up' ? 'Rising' : item.trend === 'down' ? 'Falling' : 'Stable'}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const [, setLocation] = useLocation();
@@ -185,6 +418,8 @@ export default function Dashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
+        <MarketOverview />
+
         {currentUser.role === "transporter" ? (
           <TransporterDashboard user={currentUser} />
         ) : isFarmer ? (
@@ -656,13 +891,13 @@ function FarmerDashboard({ user }: { user: User }) {
         </DialogContent>
       </Dialog>
 
-      {pendingOrders.length > 0 && (
-        <div id="orders-section">
-          <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
-            <ShoppingBag className="h-5 w-5" />
-            Orders to Fulfill
-            <Badge variant="secondary">{pendingOrders.length}</Badge>
-          </h2>
+      <div id="orders-section">
+        <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+          <ShoppingBag className="h-5 w-5" />
+          Orders to Fulfill
+          {pendingOrders.length > 0 && <Badge variant="secondary">{pendingOrders.length}</Badge>}
+        </h2>
+        {pendingOrders.length > 0 ? (
           <div className="space-y-3">
             {pendingOrders.map(order => (
               <Card key={order.id} className="border-primary/20" data-testid={`seller-order-${order.id}`}>
@@ -682,8 +917,8 @@ function FarmerDashboard({ user }: { user: User }) {
                         <div className="font-bold text-primary">K{order.total.toLocaleString()}</div>
                         <p className="text-xs text-muted-foreground">Payment received</p>
                       </div>
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         onClick={() => shipMutation.mutate(order.id)}
                         disabled={shipMutation.isPending}
                         data-testid={`button-ship-${order.id}`}
@@ -696,8 +931,15 @@ function FarmerDashboard({ user }: { user: User }) {
               </Card>
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <Card className="bg-muted/30">
+            <CardContent className="p-6 text-center text-muted-foreground">
+              <ShoppingBag className="h-10 w-10 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">Orders will appear here when buyers purchase your products.</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       <TransportTrackingSection userId={user.id} role="seller" />
 
@@ -736,9 +978,16 @@ function FarmerDashboard({ user }: { user: User }) {
             ))}
           </div>
         ) : myListings.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center text-muted-foreground">
-              You don't have any listings yet. Click "Add New Listing" to create one.
+          <Card className="border-dashed border-2">
+            <CardContent className="p-8 text-center">
+              <Package className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
+              <h3 className="font-semibold text-lg mb-1">Create your first listing to start selling</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                List your produce on the marketplace and connect with buyers across Zambia.
+              </p>
+              <Button onClick={() => setCreateDialogOpen(true)} className="gap-2">
+                <Plus className="h-4 w-4" /> Create Listing
+              </Button>
             </CardContent>
           </Card>
         ) : (
@@ -1389,12 +1638,18 @@ function BuyerDashboard({ user }: { user: User }) {
       </div>
 
       {buyerOrders.length === 0 && (
-        <Card className="bg-primary/5 border-primary/20">
-          <CardContent className="p-4 flex items-center gap-3">
-            <Lightbulb className="h-5 w-5 text-primary shrink-0" />
-            <div className="text-sm">
-              <strong>Get started:</strong> Browse the marketplace to find quality produce from verified producers. Subscribe to sellers for recurring orders!
-            </div>
+        <Card className="border-dashed border-2">
+          <CardContent className="p-6 text-center">
+            <ShoppingBag className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
+            <h3 className="font-semibold text-lg mb-1">Browse the marketplace to find fresh produce</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Discover quality products from verified farmers across Zambia. Subscribe to sellers for recurring orders!
+            </p>
+            <Button asChild className="gap-2">
+              <Link href="/marketplace">
+                <ShoppingBag className="h-4 w-4" /> Browse Marketplace
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       )}
@@ -2277,9 +2532,13 @@ function TransporterDashboard({ user }: { user: User }) {
               <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           ) : activeJobs.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <Truck className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p>No active jobs. Browse available jobs below to get started.</p>
+            <div className="text-center py-8">
+              <Truck className="h-12 w-12 mx-auto mb-3 text-muted-foreground/40" />
+              <h3 className="font-semibold mb-1">No active transport jobs</h3>
+              <p className="text-sm text-muted-foreground mb-3">Transport jobs will appear here as orders are placed.</p>
+              <Button variant="outline" size="sm" onClick={() => document.getElementById("available-jobs")?.scrollIntoView({ behavior: "smooth" })}>
+                Browse Available Jobs
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -2367,7 +2626,7 @@ function TransporterDashboard({ user }: { user: User }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card id="available-jobs">
         <CardHeader>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
